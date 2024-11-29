@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Set basic styles for the body */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 20px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        /* Search box styling */
+        .search-box {
+            width: 100%;
+            max-width: 350px;
+            height: 50px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 4px 10px rgba(72, 172, 67, 0.3);
+        }
+
+        .search-button {
+            width: 100%;
+            max-width: 350px;
+            height: 50px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s ease-in-out;
+            margin-top: 10px;
+        }
+
+        .search-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .search-button:active {
+            background-color: #3e8e41;
+            transform: scale(1);
+        }
+
+        #information_section {
+            font-size: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="searchBox" class="search-box" placeholder="Search">
+        <button id="searchButton" class="search-button">Search</button>
+        <h1 id="information_section"></h1>
+    </div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const query = document.getElementById('searchBox').value;
+            const infoSection = document.getElementById('information_section');
+
+            if (query) {
+                infoSection.textContent = 'Loading...';
+
+                fetch(`https://kitchen-app-backend.onrender.com/get-answer?question=${encodeURIComponent(query)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    infoSection.textContent = data.response || 'No response received.';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    infoSection.textContent = 'Sorry, something went wrong. Please try again later.';
+                });
+            } else {
+                infoSection.textContent = 'Please enter a search query.';
+            }
+        });
+    </script>
+</body>
+</html>
